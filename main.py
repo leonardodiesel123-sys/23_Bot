@@ -8,7 +8,7 @@ app = Flask(__name__)
 VERIFY_TOKEN = "meu_token_secreto_123"
 
 # Credenciais da API do WhatsApp da Meta (pegue o seu Token de Acesso e o ID do Telefone na tela da Meta)
-WHATSAPP_TOKEN = "EAAPpBIUhFYEBSg4AhRoZB9LoppYwp45Qp9bnp2xSVa69kqOSusfbmfZBZBsz1bfC9wafIASrJfBANVF1AA233obYZAP4pEBc3Bf3wZCgD9eXVA2wtgKCX5rZBSfsBTUK73g8Va6Lva4vpBSaDpSl2wA48sZA079GFFusF1I0pGp47aZA4OBhlrjGk271q6j59IxBMZAb5aWAZCjAWpOXqNNqRatxkaiQZCGmNfC9Fa0GHSZCw9V0eWqZAYMMqZCRWrcqfqam5bz5zl95GCNOAnibG5M8Lw"
+WHATSAPP_TOKEN = "EAAPpBIUhFYEBSsPBijtflIiOIW4JshZAsQdgx8xVwvA7mSKVsa2LO9iV5Mil8cNp1rzZBV83xmitCnRZCkfDMJ6ZBMR8nrMDloYZChDuFPJvCRxOu5teVVFhgdTx6ZA5t6cY1hwkPD4NqTzBqZAanpY6UpHj0VR8avJSn6lrGvDbZAAA6EDQf25SW0a23dx7GCaimm59zoVdkZBKLqYcH029bRjo9KWBpY3HmDGMEfNf1UYOJyWig7NLdiJf9sbTItWvTZAvtAigkSqz14CYEFijZAk"
 PHONE_NUMBER_ID = "137506042357384" # ID do número de teste que aparece na Meta
 
 @app.route("/", methods=["GET"])
