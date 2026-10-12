@@ -8,7 +8,7 @@ app = Flask(__name__)
 VERIFY_TOKEN = "meu_token_secreto_123"
 PHONE_NUMBER_ID = "1375060542357384"
 # Cole abaixo o token de acesso gerado na Meta
-WHATSAPP_TOKEN = "EAAPpBIUhFYEBSsSabaVTwZAwQLwsxOXAZAVZAZB5ZABb1NZBjmTORifzLnldVxZBwK0nO0NH4hTtK87vmFJ3A4Uqu2dsfzTEAIQZBtjjHOagLdNth2lZAo6eJgQyPvR5lEXXAQoWCRGPXl9p2NTxCaRBNl2nPqyyCHcf6vzCf3iLwIKmSoLclh3fqVWeFquYXedvhdX4wPFTm0kolqyzNz3jOoZC769HDZAoicMGfzbuwHdSPBhkkPO5mUHks1svbsGQFIy4slV6VNHdx0PpFbCGXIH"
+WHATSAPP_TOKEN = "EAAPpBIUhFYEBSsc4v5qtfdW89ddSiXyEOTqsotfjZCMbiZCY8OU1AHHFA7ucpdZAREvhuGsn50Hz68x4IHP1uHA1YYgmyXlZCb1ZAJvae7O3hnLy6sU8xMm3eZCiPcVGHPTYWS2OchYPxCIpMYJneLCyUoZB5F4qzveZAs2PJdlO0VAU7lsmQQ3mdaaoKgHVQpanMpSEFxPPafVAjoZB5UjMmYREFVSvgIi9xbKrRkWNjLz7AtNhyi1FsIeZABELLzTHy2DaHU5BUWkp4BEl4FRS4c"
 
 def enviar_resposta(to_number, text):
     url = f"https://graph.facebook.com/v18.0/{PHONE_NUMBER_ID}/messages"
