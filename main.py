@@ -26,7 +26,7 @@ def enviar_resposta(to_number, text):
 
 @app.route("/", methods=["GET"])
 def home():
-    return "Bot de WhatsApp ativo no Render!", 200
+    return "Bot comercial ativo no Render!", 200
 
 @app.route("/webhook", methods=["GET"])
 def verificar_webhook():
@@ -55,8 +55,14 @@ def receber_mensagem():
                             texto_recebido = message.get("text", {}).get("body", "")
                             print(f"Mensagem de {remetente}: {texto_recebido}")
                             
-                            # Envia a resposta automática de volta
-                            enviar_resposta(remetente, f"Olá! Recebi sua mensagem: '{texto_recebido}'. O bot está funcionando perfeitamente!")
+                            # Resposta simulada de demonstração comercial
+                            resposta_bot = (
+                                f"Olá! Seja bem-vindo ao nosso atendimento automatizado. "
+                                f"Recebi a sua dúvida: '{texto_recebido}'. "
+                                f"Como posso ajudar o seu negócio hoje?"
+                            )
+                            
+                            enviar_resposta(remetente, resposta_bot)
     except Exception as e:
         print("Erro ao processar mensagem:", str(e))
 
