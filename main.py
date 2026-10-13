@@ -1,73 +1,72 @@
 from flask import Flask, request, jsonify
 import requests
-import os
 
 app = Flask(__name__)
 
-# Configurações do WhatsApp
-VERIFY_TOKEN = "meu_token_secreto_123"
-PHONE_NUMBER_ID = "1375060542357384"
-WHATSAPP_TOKEN = "EAAPpBIUhFYEBSsc4v5qtfdW89ddSiXyEOTqsotfjZCMbiZCY8OU1AHHFA7ucpdZAREvhuGsn50Hz68x4IHP1uHA1YYgmyXlZCb1ZAJvae7O3hnLy6sU8xMm3eZCiPcVGHPTYWS2OchYPxCIpMYJneLCyUoZB5F4qzveZAs2PJdlO0VAU7lsmQQ3mdaaoKgHVQpanMpSEFxPPafVAjoZB5UjMmYREFVSvgIi9xbKrRkWNjLz7AtNhyi1FsIeZABELLzTHy2DaHU5BUWkp4BEl4FRS4c"
+# Configurações do seu Servidor Evolution API (Local ou Nuvem)
+EVOLUTION_SERVER = "http://localhost:8080" # Onde a API está a correr
+API_KEY = "sua_global_api_key_aqui"         # Chave de segurança da API
 
-def enviar_resposta(to_number, text):
-    url = f"https://graph.facebook.com/v19.0/{PHONE_NUMBER_ID}/messages"
+def enviar_mensagem_cliente(instance_name, number, text):
+    """Envia uma mensagem através da instância específica do lojista"""
+    url = f"{EVOLUTION_SERVER}/message/sendText/{instance_name}"
     headers = {
-        "Authorization": f"Bearer {WHATSAPP_TOKEN}",
+        "apikey": API_KEY,
         "Content-Type": "application/json"
     }
     payload = {
-        "messaging_product": "whatsapp",
-        "to": to_number,
-        "type": "text",
-        "text": {"body": text}
+        "number": number,
+        "text": text
     }
     response = requests.post(url, headers=headers, json=payload)
-    print("Resposta enviada para a Meta:", response.status_code, response.text)
+    print(f"Mensagem enviada para o cliente [{instance_name}]:", response.status_code, response.text)
 
 @app.route("/", methods=["GET"])
 def home():
-    return "Bot comercial ativo no Render!", 200
+    print("Servidor SaaS Central ativo e operacional!")
+    return "SaaS de Bots Multi-Cliente Ativo!", 200
 
-@app.route("/webhook", methods=["GET"])
-def verificar_webhook():
-    mode = request.args.get("hub.mode")
-    token = request.args.get("hub.verify_token")
-    challenge = request.args.get("hub.challenge")
-
-    if mode == "subscribe" and token == VERIFY_TOKEN:
-        print("Webhook verificado com sucesso!")
-        return challenge, 200
-    return "Token de verificação inválido", 403
-
-@app.route("/webhook", methods=["POST"])
-def receber_mensagem():
+# Webhook único que recebe mensagens de TODOS os clientes lojistas
+@app.route("/webhook-saas", methods=["POST"])
+def webhook_multi_cliente():
     data = request.get_json()
-    print("Payload recebido no Webhook:", data)
+    print("Payload recebido de um lojista:", data)
 
     try:
-        if "object" in data:
-            for entry in data.get("entry", []):
-                for change in entry.get("changes", []):
-                    value = change.get("value", {})
-                    if "messages" in value:
-                        for message in value["messages"]:
-                            remetente = message["from"]
-                            texto_recebido = message.get("text", {}).get("body", "")
-                            print(f"Mensagem de {remetente}: {texto_recebido}")
-                            
-                            # Resposta simulada de demonstração comercial
-                            resposta_bot = (
-                                f"Olá! Seja bem-vindo ao nosso atendimento automatizado. "
-                                f"Recebi a sua dúvida: '{texto_recebido}'. "
-                                f"Como posso ajudar o seu negócio hoje?"
-                            )
-                            
-                            enviar_resposta(remetente, resposta_bot)
+        # A Evolution API identifica qual instância/lojista mandou a mensagem
+        event = data.get("event")
+        instance = data.get("instance") # Ex: "pizzaria_central"
+        
+        if event == "messages.upsert":
+            message_data = data.get("data", {})
+            
+            # Evita responder mensagens enviadas pelo próprio bot
+            if message_data.get("key", {}).get("fromMe", False):
+                return jsonify({"status": "ignored_own_message"}), 200
+
+            remetente = message_data.get("key", {}).get("remoteJid", "")
+            texto_recebido = message_data.get("message", {}).get("conversation", "")
+            
+            if not texto_recebido:
+                # Tenta capturar se for mensagem estendida
+                texto_recebido = message_data.get("message", {}).get("extendedTextMessage", {}).get("text", "")
+
+            print(f"Loja [{instance}] recebeu de {remetente}: {texto_recebido}")
+
+            # Lógica comercial automatizada por nicho ou padrão
+            resposta_personalizada = (
+                f"Olá! Seja bem-vindo ao atendimento automatizado da loja. "
+                f"Recebemos a sua mensagem: '{texto_recebido}'. "
+                f"Como podemos ajudar o senhor(a) hoje?"
+            )
+
+            # Devolve a resposta usando a mesma instância do lojista
+            enviar_mensagem_cliente(instance, remetente, resposta_personalizada)
+
     except Exception as e:
-        print("Erro ao processar mensagem:", str(e))
+        print("Erro ao processar webhook multi-cliente:", str(e))
 
     return jsonify({"status": "success"}), 200
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=5000, debug=True)
